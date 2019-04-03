@@ -1,3 +1,5 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var MSALError = /** @class */ (function () {
     function MSALError(error, errorDesc, scopes) {
         this._error = "";
@@ -43,5 +45,5 @@ var MSALError = /** @class */ (function () {
     });
     return MSALError;
 }());
-export { MSALError };
+exports.MSALError = MSALError;
 //# sourceMappingURL=MSALError.js.map

@@ -1,15 +1,17 @@
-import * as tslib_1 from "tslib";
-import { Inject, Injectable } from "@angular/core";
-import { ActivatedRoute, Router, } from "@angular/router";
-import { MSAL_CONFIG, MsalService } from "./msal.service";
-import 'rxjs/add/operator/filter';
-import 'rxjs/add/operator/pairwise';
-import { Location, PlatformLocation } from "@angular/common";
-import { MsalConfig } from "./msal-config";
-import { BroadcastService } from "./broadcast.service";
-import { Constants } from "msal";
-import { MSALError } from "./MSALError";
-import { AuthenticationResult } from "./AuthenticationResult";
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = require("tslib");
+var core_1 = require("@angular/core");
+var router_1 = require("@angular/router");
+var msal_service_1 = require("./msal.service");
+require("rxjs/add/operator/filter");
+require("rxjs/add/operator/pairwise");
+var common_1 = require("@angular/common");
+var msal_config_1 = require("./msal-config");
+var broadcast_service_1 = require("./broadcast.service");
+var msal_1 = require("msal");
+var MSALError_1 = require("./MSALError");
+var AuthenticationResult_1 = require("./AuthenticationResult");
 var MsalGuard = /** @class */ (function () {
     function MsalGuard(config, authService, router, activatedRoute, location, platformLocation, broadcastService) {
         this.config = config;
@@ -32,7 +34,7 @@ var MsalGuard = /** @class */ (function () {
                 if (!this.authService._renewActive && !this.authService.loginInProgress()) {
                     var loginStartPage = this.getBaseUrl() + state.url;
                     if (loginStartPage !== null) {
-                        this.authService.getCacheStorage().setItem(Constants.angularLoginRequest, loginStartPage);
+                        this.authService.getCacheStorage().setItem(msal_1.Constants.angularLoginRequest, loginStartPage);
                     }
                     if (this.config.popUp) {
                         return new Promise(function (resolve, reject) {
@@ -55,13 +57,13 @@ var MsalGuard = /** @class */ (function () {
                 _this.authService.acquireTokenSilent([_this.config.clientID]).then(function (token) {
                     if (token) {
                         _this.authService._oauthData.isAuthenticated = true;
-                        var authenticationResult = new AuthenticationResult(token);
+                        var authenticationResult = new AuthenticationResult_1.AuthenticationResult(token);
                         _this.broadcastService.broadcast("msal:loginSuccess", authenticationResult);
                         resolve(true);
                     }
                 }, function (error) {
                     var errorParts = error.split('|');
-                    var msalError = new MSALError(errorParts[0], errorParts[1], "");
+                    var msalError = new MSALError_1.MSALError(errorParts[0], errorParts[1], "");
                     _this.broadcastService.broadcast("msal:loginFailure", msalError);
                     resolve(false);
                 });
@@ -86,11 +88,11 @@ var MsalGuard = /** @class */ (function () {
         }
     };
     MsalGuard = tslib_1.__decorate([
-        Injectable(),
-        tslib_1.__param(0, Inject(MSAL_CONFIG)),
-        tslib_1.__metadata("design:paramtypes", [MsalConfig, MsalService, Router, ActivatedRoute, Location, PlatformLocation, BroadcastService])
+        core_1.Injectable(),
+        tslib_1.__param(0, core_1.Inject(msal_service_1.MSAL_CONFIG)),
+        tslib_1.__metadata("design:paramtypes", [msal_config_1.MsalConfig, msal_service_1.MsalService, router_1.Router, router_1.ActivatedRoute, common_1.Location, common_1.PlatformLocation, broadcast_service_1.BroadcastService])
     ], MsalGuard);
     return MsalGuard;
 }());
-export { MsalGuard };
+exports.MsalGuard = MsalGuard;
 //# sourceMappingURL=msal-guard.service.js.map

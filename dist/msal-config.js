@@ -1,3 +1,5 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var MsalConfig = /** @class */ (function () {
     function MsalConfig() {
         this.authority = "https://login.microsoftonline.com/common";
@@ -8,5 +10,5 @@ var MsalConfig = /** @class */ (function () {
     }
     return MsalConfig;
 }());
-export { MsalConfig };
+exports.MsalConfig = MsalConfig;
 //# sourceMappingURL=msal-config.js.map

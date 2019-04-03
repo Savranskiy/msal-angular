@@ -1,3 +1,5 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var AuthenticationResult = /** @class */ (function () {
     function AuthenticationResult(token, tokenType) {
         this._token = "";
@@ -29,5 +31,5 @@ var AuthenticationResult = /** @class */ (function () {
     });
     return AuthenticationResult;
 }());
-export { AuthenticationResult };
+exports.AuthenticationResult = AuthenticationResult;
 //# sourceMappingURL=AuthenticationResult.js.map

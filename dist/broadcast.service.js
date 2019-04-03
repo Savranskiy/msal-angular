@@ -1,11 +1,13 @@
-import * as tslib_1 from "tslib";
-import { Injectable } from '@angular/core';
-import 'rxjs/add/operator/filter';
-import 'rxjs/add/operator/map';
-import { BehaviorSubject } from "rxjs/BehaviorSubject";
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = require("tslib");
+var core_1 = require("@angular/core");
+require("rxjs/add/operator/filter");
+require("rxjs/add/operator/map");
+var BehaviorSubject_1 = require("rxjs/BehaviorSubject");
 var BroadcastService = /** @class */ (function () {
     function BroadcastService() {
-        this._msalSubject = new BehaviorSubject(1);
+        this._msalSubject = new BehaviorSubject_1.BehaviorSubject(1);
         this.msalItem$ = this._msalSubject.asObservable();
     }
     BroadcastService.prototype.broadcast = function (type, payload) {
@@ -24,10 +26,10 @@ var BroadcastService = /** @class */ (function () {
             .subscribe(callback);
     };
     BroadcastService = tslib_1.__decorate([
-        Injectable(),
+        core_1.Injectable(),
         tslib_1.__metadata("design:paramtypes", [])
     ], BroadcastService);
     return BroadcastService;
 }());
-export { BroadcastService };
+exports.BroadcastService = BroadcastService;
 //# sourceMappingURL=broadcast.service.js.map

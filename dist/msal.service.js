@@ -1,15 +1,17 @@
-import * as tslib_1 from "tslib";
-import { Inject, Injectable, InjectionToken } from "@angular/core";
-import { MsalConfig } from "./msal-config";
-import "rxjs/add/observable/of";
-import "rxjs/add/operator/do";
-import "rxjs/add/operator/delay";
-import { UserAgentApplication, Constants, Logger } from "msal";
-import { Router } from "@angular/router";
-import { BroadcastService } from "./broadcast.service";
-import { AuthenticationResult } from "./AuthenticationResult";
-import { MSALError } from "./MSALError";
-export var MSAL_CONFIG = new InjectionToken("MSAL_CONFIG");
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = require("tslib");
+var core_1 = require("@angular/core");
+var msal_config_1 = require("./msal-config");
+require("rxjs/add/observable/of");
+require("rxjs/add/operator/do");
+require("rxjs/add/operator/delay");
+var msal_1 = require("msal");
+var router_1 = require("@angular/router");
+var broadcast_service_1 = require("./broadcast.service");
+var AuthenticationResult_1 = require("./AuthenticationResult");
+var MSALError_1 = require("./MSALError");
+exports.MSAL_CONFIG = new core_1.InjectionToken("MSAL_CONFIG");
 var MsalService = /** @class */ (function (_super) {
     tslib_1.__extends(MsalService, _super);
     function MsalService(config, router, broadcastService) {
@@ -18,7 +20,7 @@ var MsalService = /** @class */ (function (_super) {
             cacheLocation: config.cacheLocation,
             redirectUri: config.redirectUri,
             postLogoutRedirectUri: config.postLogoutRedirectUri,
-            logger: new Logger(config.logger, { correlationId: config.correlationId, level: config.level, piiLoggingEnabled: config.piiLoggingEnabled }),
+            logger: new msal_1.Logger(config.logger, { correlationId: config.correlationId, level: config.level, piiLoggingEnabled: config.piiLoggingEnabled }),
             loadFrameTimeout: config.loadFrameTimeout,
             navigateToLoginRequestUrl: config.navigateToLoginRequestUrl,
             isAngular: true,
@@ -39,7 +41,7 @@ var MsalService = /** @class */ (function (_super) {
         });
         window.addEventListener('msal:popUpClosed', function (e) {
             var errorParts = e.detail.split('|');
-            var msalError = new MSALError(errorParts[0], errorParts[1]);
+            var msalError = new MSALError_1.MSALError(errorParts[0], errorParts[1]);
             if (_this.loginInProgress()) {
                 broadcastService.broadcast('msal:loginFailure', msalError);
                 _this.setloginInProgress(false);
@@ -112,11 +114,11 @@ var MsalService = /** @class */ (function (_super) {
             var error = requestInfo.parameters["error"];
             var errorDescription = requestInfo.parameters["error_description"];
             var tokenType = null;
-            var msalError = new MSALError(error, errorDescription);
-            var authenticationResult = new AuthenticationResult(token);
+            var msalError = new MSALError_1.MSALError(error, errorDescription);
+            var authenticationResult = new AuthenticationResult_1.AuthenticationResult(token);
             if (requestInfo.stateMatch) {
                 if (requestInfo.requestType === "RENEW_TOKEN") {
-                    tokenType = Constants.accessToken;
+                    tokenType = msal_1.Constants.accessToken;
                     authenticationResult.tokenType = tokenType;
                     this._renewActive = false;
                     // Call within the same context without full page redirect keeps the callback
@@ -131,7 +133,7 @@ var MsalService = /** @class */ (function (_super) {
                     }
                 }
                 else if (requestInfo.requestType === "LOGIN") {
-                    tokenType = Constants.idToken;
+                    tokenType = msal_1.Constants.idToken;
                     authenticationResult.tokenType = tokenType;
                     this.updateDataFromCache(this.loginScopes);
                     if (this._oauthData.userName) {
@@ -160,8 +162,8 @@ var MsalService = /** @class */ (function (_super) {
                 // redirect to login start page
                 if (window.parent === window && !isPopup) {
                     if (this._navigateToLoginRequestUrl) {
-                        var loginStartPage = this._cacheStorage.getItem(Constants.loginRequest);
-                        this._cacheStorage.setItem(Constants.urlHash, hash);
+                        var loginStartPage = this._cacheStorage.getItem(msal_1.Constants.loginRequest);
+                        this._cacheStorage.setItem(msal_1.Constants.urlHash, hash);
                         if (typeof loginStartPage !== "undefined" && loginStartPage && loginStartPage.length !== 0) {
                             // prevent the current location change and redirect the user back to the login start page
                             this._logger.verbose("Redirecting to start page: " + loginStartPage);
@@ -180,7 +182,7 @@ var MsalService = /** @class */ (function (_super) {
             }
         }
         else {
-            var pendingCallback = this._cacheStorage.getItem(Constants.urlHash);
+            var pendingCallback = this._cacheStorage.getItem(msal_1.Constants.urlHash);
             if (pendingCallback) {
                 this.processRedirectCallBack(pendingCallback);
             }
@@ -190,15 +192,15 @@ var MsalService = /** @class */ (function (_super) {
     MsalService.prototype.processRedirectCallBack = function (hash) {
         this._logger.info('Processing the callback from redirect response');
         var requestInfo = this.getRequestInfo(hash);
-        var token = requestInfo.parameters[Constants.accessToken] || requestInfo.parameters[Constants.idToken];
-        var errorDesc = requestInfo.parameters[Constants.errorDescription];
-        var error = requestInfo.parameters[Constants.error];
+        var token = requestInfo.parameters[msal_1.Constants.accessToken] || requestInfo.parameters[msal_1.Constants.idToken];
+        var errorDesc = requestInfo.parameters[msal_1.Constants.errorDescription];
+        var error = requestInfo.parameters[msal_1.Constants.error];
         var tokenType;
-        this._cacheStorage.removeItem(Constants.urlHash);
-        var msalError = new MSALError(error, errorDesc);
-        var authenticationResult = new AuthenticationResult(token);
-        if (requestInfo.parameters[Constants.accessToken]) {
-            tokenType = Constants.accessToken;
+        this._cacheStorage.removeItem(msal_1.Constants.urlHash);
+        var msalError = new MSALError_1.MSALError(error, errorDesc);
+        var authenticationResult = new AuthenticationResult_1.AuthenticationResult(token);
+        if (requestInfo.parameters[msal_1.Constants.accessToken]) {
+            tokenType = msal_1.Constants.accessToken;
             if (token) {
                 authenticationResult.tokenType = tokenType;
                 this.broadcastService.broadcast("msal:acquireTokenSuccess", authenticationResult);
@@ -209,7 +211,7 @@ var MsalService = /** @class */ (function (_super) {
             }
         }
         else {
-            tokenType = Constants.idToken;
+            tokenType = msal_1.Constants.idToken;
             if (token) {
                 authenticationResult.tokenType = tokenType;
                 this.broadcastService.broadcast("msal:loginSuccess", authenticationResult);
@@ -257,12 +259,12 @@ var MsalService = /** @class */ (function (_super) {
         this._logger.verbose("login popup flow");
         return new Promise(function (resolve, reject) {
             _super.prototype.loginPopup.call(_this, consentScopes, extraQueryParameters).then(function (idToken) {
-                var authenticationResult = new AuthenticationResult(idToken, "idToken");
+                var authenticationResult = new AuthenticationResult_1.AuthenticationResult(idToken, "idToken");
                 _this.broadcastService.broadcast("msal:loginSuccess", authenticationResult);
                 resolve(idToken);
             }, function (error) {
                 var errorParts = error.split('|');
-                var msalError = new MSALError(errorParts[0], errorParts[1]);
+                var msalError = new MSALError_1.MSALError(errorParts[0], errorParts[1]);
                 _this._logger.error("Error during login:\n" + error);
                 _this.broadcastService.broadcast("msal:loginFailure", msalError);
                 reject(error);
@@ -281,12 +283,12 @@ var MsalService = /** @class */ (function (_super) {
         return new Promise(function (resolve, reject) {
             _super.prototype.acquireTokenSilent.call(_this, scopes, authority, user, extraQueryParameters).then(function (token) {
                 _this._renewActive = false;
-                var authenticationResult = new AuthenticationResult(token);
+                var authenticationResult = new AuthenticationResult_1.AuthenticationResult(token);
                 _this.broadcastService.broadcast('msal:acquireTokenSuccess', authenticationResult);
                 resolve(token);
             }, function (error) {
                 var errorParts = error.split('|');
-                var msalError = new MSALError(errorParts[0], errorParts[1]);
+                var msalError = new MSALError_1.MSALError(errorParts[0], errorParts[1]);
                 _this._renewActive = false;
                 _this.broadcastService.broadcast('msal:acquireTokenFailure', msalError);
                 _this._logger.error('Error when acquiring token for scopes: ' + scopes + " " + error);
@@ -299,12 +301,12 @@ var MsalService = /** @class */ (function (_super) {
         return new Promise(function (resolve, reject) {
             _super.prototype.acquireTokenPopup.call(_this, scopes, authority, user, extraQueryParameters).then(function (token) {
                 _this._renewActive = false;
-                var authenticationResult = new AuthenticationResult(token);
+                var authenticationResult = new AuthenticationResult_1.AuthenticationResult(token);
                 _this.broadcastService.broadcast('msal:acquireTokenSuccess', authenticationResult);
                 resolve(token);
             }, function (error) {
                 var errorParts = error.split('|');
-                var msalError = new MSALError(errorParts[0], errorParts[1]);
+                var msalError = new MSALError_1.MSALError(errorParts[0], errorParts[1]);
                 _this._renewActive = false;
                 _this.broadcastService.broadcast('msal:acquireTokenFailure', msalError);
                 _this._logger.error('Error when acquiring token for scopes : ' + scopes + " " + error);
@@ -313,9 +315,9 @@ var MsalService = /** @class */ (function (_super) {
         });
     };
     MsalService.prototype.acquireTokenRedirect = function (scopes, authority, user, extraQueryParameters) {
-        var acquireTokenStartPage = this._cacheStorage.getItem(Constants.loginRequest);
+        var acquireTokenStartPage = this._cacheStorage.getItem(msal_1.Constants.loginRequest);
         if (window.location.href !== acquireTokenStartPage)
-            this._cacheStorage.setItem(Constants.loginRequest, window.location.href);
+            this._cacheStorage.setItem(msal_1.Constants.loginRequest, window.location.href);
         _super.prototype.acquireTokenRedirect.call(this, scopes, authority, user, extraQueryParameters);
     };
     MsalService.prototype.loginInProgress = function () {
@@ -340,11 +342,11 @@ var MsalService = /** @class */ (function (_super) {
         this._cacheStorage.removeItem(key);
     };
     MsalService = tslib_1.__decorate([
-        Injectable(),
-        tslib_1.__param(0, Inject(MSAL_CONFIG)),
-        tslib_1.__metadata("design:paramtypes", [MsalConfig, Router, BroadcastService])
+        core_1.Injectable(),
+        tslib_1.__param(0, core_1.Inject(exports.MSAL_CONFIG)),
+        tslib_1.__metadata("design:paramtypes", [msal_config_1.MsalConfig, router_1.Router, broadcast_service_1.BroadcastService])
     ], MsalService);
     return MsalService;
-}(UserAgentApplication));
-export { MsalService };
+}(msal_1.UserAgentApplication));
+exports.MsalService = MsalService;
 //# sourceMappingURL=msal.service.js.map
